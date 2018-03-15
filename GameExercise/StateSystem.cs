@@ -40,6 +40,8 @@ namespace GameExercise
                 throw new ArgumentException("A state with the provided id does not exist.", nameof(stateId));
             }
 
+            Console.WriteLine($"Change to state {stateId}");
+
             currentState = stateStore[stateId];
         }
         public bool Exists(string stateId)

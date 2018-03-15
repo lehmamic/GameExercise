@@ -47,6 +47,9 @@ namespace GameExercise
             {
                 long currentFrameTicks = stopwatch.ElapsedTicks;
                 double deltaMilliseconds = (currentFrameTicks - previousFrameTicks) * (1000.0 / Stopwatch.Frequency);
+                previousFrameTicks = currentFrameTicks;
+
+                Console.WriteLine($"Delta milliseconds: {deltaMilliseconds}");
 
                 window.PumpEvents();
 

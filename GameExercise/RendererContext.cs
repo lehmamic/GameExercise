@@ -8,8 +8,6 @@ namespace GameExercise
 {
     public class RendererContext : IRendererContext
     {
-        private readonly DeviceBuffer vertexBuffer;
-        private readonly DeviceBuffer indexBuffer;
         private readonly DeviceBuffer projectionBuffer;
         private readonly DeviceBuffer viewBuffer;
         private readonly DeviceBuffer modelBuffer;
