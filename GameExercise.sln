@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameExercise", "GameExercise\GameExercise.csproj", "{EE571F9B-30C3-48B4-8ACC-E31EF5BC5AD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameExercise.Tests", "GameExercise.Tests\GameExercise.Tests.csproj", "{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{EE571F9B-30C3-48B4-8ACC-E31EF5BC5AD4}.Release|x64.Build.0 = Release|x64
 		{EE571F9B-30C3-48B4-8ACC-E31EF5BC5AD4}.Release|x86.ActiveCfg = Release|x86
 		{EE571F9B-30C3-48B4-8ACC-E31EF5BC5AD4}.Release|x86.Build.0 = Release|x86
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|x64.ActiveCfg = Debug|x64
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|x64.Build.0 = Debug|x64
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|x86.ActiveCfg = Debug|x86
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Debug|x86.Build.0 = Debug|x86
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|x64.ActiveCfg = Release|x64
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|x64.Build.0 = Release|x64
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|x86.ActiveCfg = Release|x86
+		{C5722DE8-56BD-4128-9F6A-1F6AD81E287A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal
