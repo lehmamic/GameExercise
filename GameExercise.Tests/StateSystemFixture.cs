@@ -1,3 +1,4 @@
+using Moq;
 using Xunit;
 
 namespace GameExercise.Tests
@@ -9,7 +10,8 @@ namespace GameExercise.Tests
         {
             // arrange
             var stateSystem = new StateSystem();
-            stateSystem.AddState("splash", new SplashScreenState (stateSystem));
+            stateSystem.AddState("splash", new SplashScreenState (stateSystem, 
+            Mock.Of<IRendererContext>()));
 
             // act
             bool exists = stateSystem.Exists("splash");

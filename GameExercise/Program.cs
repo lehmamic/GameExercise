@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using Veldrid.Utilities;
 
 namespace GameExercise
 {
@@ -29,12 +30,12 @@ namespace GameExercise
 
             GraphicsDevice graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, options, GraphicsBackend.OpenGL);
 
-            // var factory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
-            // CreateResources(graphicsDevice, factory);
+            var factory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
+            var context = new RendererContext(window, graphicsDevice, factory);
 
             var stateSystem = new StateSystem();
-            stateSystem.AddState("splash", new SplashScreenState(stateSystem));
-            stateSystem.AddState("title_menu", new TitleMenuState());
+            stateSystem.AddState("splash", new SplashScreenState(stateSystem, context));
+            stateSystem.AddState("title_menu", new TitleMenuState(stateSystem, context));
 
             // Select the start state
             stateSystem.ChangeState("splash");
@@ -48,7 +49,9 @@ namespace GameExercise
                 double deltaMilliseconds = (currentFrameTicks - previousFrameTicks) * (1000.0 / Stopwatch.Frequency);
 
                 window.PumpEvents();
-                // Draw(graphicsDevice, window);
+
+                stateSystem.Update(deltaMilliseconds);
+                stateSystem.Render();
             }
         }
     }

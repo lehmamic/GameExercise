@@ -12,4 +12,14 @@
     <PackageReference Include="Veldrid.Utilities" Version="4.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Shaders\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+    </Content>
+    <!-- <Content Include="$(MSBuildThisFileDirectory)Textures\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Textures\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+    </Content> -->
+  </ItemGroup>
 </Project>
