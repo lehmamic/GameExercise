@@ -53,6 +53,9 @@ namespace GameExercise
 
         public void Render()
         {
+            var modelMatrix = Matrix4x4.CreateRotationX(MathUtils.Radians((float)this.currentRotation));
+            this.context.SetModelMatrix(modelMatrix);
+
             context.CommandList.Begin();
 
             this.context.CommandList.SetFramebuffer(this.context.GraphicsDevice.SwapchainFramebuffer);
@@ -83,7 +86,7 @@ namespace GameExercise
 
         public void Update(double elapsedTime)
         {
-            currentRotation = 10 * elapsedTime;
+            currentRotation = 10 * elapsedTime / 1000;
         }
     }
 }
