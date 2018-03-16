@@ -9,7 +9,7 @@ namespace GameExercise
         private readonly IRendererContext context;
         private readonly Camera camera;
 
-        private double delayInMilliseconds = 3000;
+        private double delayInSeconds = 3;
 
         public SplashScreenState(StateSystem stateSystem, IRendererContext context)
         {
@@ -43,10 +43,10 @@ namespace GameExercise
 
         public void Update(double elapsedTime)
         {
-            this.delayInMilliseconds -= elapsedTime;
-            if (this.delayInMilliseconds <= 0)
+            this.delayInSeconds -= elapsedTime;
+            if (this.delayInSeconds <= 0)
             {
-                this.delayInMilliseconds = 3;
+                this.delayInSeconds = 3;
                 this.stateSystem.ChangeState("title_menu");
             }
         }

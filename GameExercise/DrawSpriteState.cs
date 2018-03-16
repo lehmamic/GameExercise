@@ -1,11 +1,10 @@
 using System;
-using System.Linq;
 using System.Numerics;
 using Veldrid;
 
 namespace GameExercise
 {
-    public class TitleMenuState : IGameObject
+    public class DrawSpriteState : IGameObject
     {
         private static readonly VertexPositionColor[] Vertices = new VertexPositionColor[]
             {
@@ -20,7 +19,6 @@ namespace GameExercise
         private readonly StateSystem stateSystem;
         private readonly IRendererContext context;
 
-        private double currentRotation = 0;
         private DeviceBuffer vertexBuffer;
         private DeviceBuffer indexBuffer;
         private DeviceBuffer modelMatrixBuffer;
@@ -28,7 +26,7 @@ namespace GameExercise
         private ResourceSet projectionViewResourceSet;
         private ResourceSet modelTextureResourceSet;
 
-        public TitleMenuState(StateSystem stateSystem, IRendererContext context)
+        public DrawSpriteState(StateSystem stateSystem, IRendererContext context)
         {
             if (stateSystem == null)
             {
@@ -44,59 +42,18 @@ namespace GameExercise
             this.context = context;
 
             this.camera = new Camera(this.context.Window.Width, this.context.Window.Height);
+            this.camera.Position = new Vector3(0f, 0f, 3f);
 
             this.CreateDeviceObjects();
         }
-
         public void Render()
         {
-            CommandList commands = this.context.CommandList;
-            commands.Begin();
-
-            this.camera.WindowResized(context.Window.Width, context.Window.Height);
-
-            var projection = this.camera.ProjectionMatrix;
-            commands.UpdateBuffer(this.context.ProjectionMatrixBuffer, 0, projection);
-
-            var view = this.camera.ViewMatrix;
-            commands.UpdateBuffer(this.context.ViewMatrixBuffer, 0, view);
-
-            var model = Matrix4x4.CreateRotationY(MathUtils.Radians((float)this.currentRotation));
-            commands.UpdateBuffer(this.modelMatrixBuffer, 0, model);
-
-            commands.SetFramebuffer(this.context.GraphicsDevice.SwapchainFramebuffer);
-
-            // var framebufferWidth = this.context.GraphicsDevice.SwapchainFramebuffer.Width;
-            // var framebufferHeight = this.context.GraphicsDevice.SwapchainFramebuffer.Height;
-            // commands.SetViewport(0, new Viewport(0, 0, framebufferWidth, framebufferHeight, 0, 1));
-            commands.SetFullViewports();
-            commands.ClearColorTarget(0, RgbaFloat.Black);
-            commands.ClearDepthStencil(1f);
-
-            // Set all relevant state to draw our triangle.
-            commands.SetPipeline(this.pipeline);
-            commands.SetVertexBuffer(0, vertexBuffer);
-            commands.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
-            commands.SetGraphicsResourceSet(0, this.projectionViewResourceSet);
-            commands.SetGraphicsResourceSet(1, this.modelTextureResourceSet);
-
-            // Issue a Draw command for a single instance with 12 * 3 (6 faced with 2 triangles per face) indices.
-            commands.DrawIndexed(
-                indexCount: (uint)Indices.Length,
-                instanceCount: 1,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0);
-
-            context.CommandList.End();
-            context.GraphicsDevice.SubmitCommands(context.CommandList);
-
-            context.GraphicsDevice.SwapBuffers();
+            throw new System.NotImplementedException();
         }
 
         public void Update(double elapsedTime)
         {
-            currentRotation += 10 * elapsedTime;
+            throw new System.NotImplementedException();
         }
 
         private void CreateDeviceObjects()

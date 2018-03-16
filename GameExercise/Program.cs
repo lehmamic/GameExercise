@@ -36,9 +36,10 @@ namespace GameExercise
             var stateSystem = new StateSystem();
             stateSystem.AddState("splash", new SplashScreenState(stateSystem, context));
             stateSystem.AddState("title_menu", new TitleMenuState(stateSystem, context));
+            stateSystem.AddState("sprite_test", new DrawSpriteState(stateSystem, context));
 
             // Select the start state
-            stateSystem.ChangeState("splash");
+            stateSystem.ChangeState("sprite_test");
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             long previousFrameTicks = 0;
@@ -53,7 +54,7 @@ namespace GameExercise
 
                 window.PumpEvents();
 
-                stateSystem.Update(deltaMilliseconds);
+                stateSystem.Update(deltaMilliseconds / 1000);
                 stateSystem.Render();
             }
         }
