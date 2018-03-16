@@ -26,6 +26,7 @@ namespace GameExercise
             {
                 throw new ArgumentNullException(nameof(context));
             }
+
             this.stateSystem = stateSystem;
             this.context = context;
 
@@ -53,7 +54,7 @@ namespace GameExercise
 
         public void Render()
         {
-            var modelMatrix = Matrix4x4.CreateRotationX(MathUtils.Radians((float)this.currentRotation));
+            var modelMatrix = Matrix4x4.CreateRotationY(MathUtils.Radians((float)this.currentRotation));
             this.context.SetModelMatrix(modelMatrix);
 
             context.CommandList.Begin();
@@ -86,7 +87,7 @@ namespace GameExercise
 
         public void Update(double elapsedTime)
         {
-            currentRotation = 10 * elapsedTime / 1000;
+            currentRotation += 10 * elapsedTime / 1000;
         }
     }
 }
