@@ -7,22 +7,35 @@ namespace GameExercise
 {
     public class TitleMenuState : IGameObject
     {
+        private static readonly VertexPositionColor[] Vertices = new VertexPositionColor[]
+            {
+                new VertexPositionColor(new Vector3(-0.5f, 0f, 0f), new RgbaFloat(1.0f, 0.0f, 0.0f, 0.5f)),
+                new VertexPositionColor(new Vector3(0.5f, 0f, 0f), new RgbaFloat(0.0f, 1.0f, 0.0f, 0.5f)),
+                new VertexPositionColor(new Vector3(0f, 0.5f, 0f), new RgbaFloat(0.0f, 0.0f, 1.0f, 0.5f)),
+            };
+
+        private static readonly ushort[] Indices = new ushort[] { 0, 1, 2 };
+
+        private readonly Camera camera;
         private readonly StateSystem stateSystem;
         private readonly IRendererContext context;
 
         private double currentRotation = 0;
-        private VertexPositionColor[] vertices;
         private DeviceBuffer vertexBuffer;
         private DeviceBuffer indexBuffer;
+        private DeviceBuffer modelMatrixBuffer;
+        private Pipeline pipeline;
+        private ResourceSet projectionViewResourceSet;
+        private ResourceSet modelTextureResourceSet;
 
         public TitleMenuState(StateSystem stateSystem, IRendererContext context)
         {
-            if(stateSystem == null)
+            if (stateSystem == null)
             {
                 throw new ArgumentNullException(nameof(stateSystem));
             }
 
-            if(context == null)
+            if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
@@ -30,50 +43,40 @@ namespace GameExercise
             this.stateSystem = stateSystem;
             this.context = context;
 
-            this.context.CommandList.Begin();
+            this.camera = new Camera(this.context.Window.Width, this.context.Window.Height);
 
-            this.vertices = new VertexPositionColor[]
-            {
-                new VertexPositionColor(new Vector3(-0.5f, 0f, 0f), new RgbaFloat(1.0f, 0.0f, 0.0f, 0.5f)),
-                new VertexPositionColor(new Vector3(0.5f, 0f, 0f), new RgbaFloat(0.0f, 1.0f, 0.0f, 0.5f)),
-                new VertexPositionColor(new Vector3(0f, 0.5f, 0f), new RgbaFloat(0.0f, 0.0f, 1.0f, 0.5f)),
-            };
-            this.vertexBuffer = this.context.ResourceFactory.CreateBuffer(new BufferDescription((uint)this.vertices.Length * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
-            this.context.CommandList.UpdateBuffer(vertexBuffer, 0, this.vertices);
-
-            ushort[] verticesIndices = Enumerable.Range(0, vertices.Length)
-                .Select(i => (ushort)i)
-                .ToArray();
-            this.indexBuffer = this.context.ResourceFactory.CreateBuffer(new BufferDescription((uint)this.vertices.Length * sizeof(ushort), BufferUsage.IndexBuffer));
-            this.context.CommandList.UpdateBuffer(this.indexBuffer, 0, verticesIndices);
-
-            this.context.CommandList.End();
-            this.context.GraphicsDevice.SubmitCommands(this.context.CommandList);
-            this.context.GraphicsDevice.WaitForIdle();
+            this.CreateDeviceObjects();
         }
 
         public void Render()
         {
-            var modelMatrix = Matrix4x4.CreateRotationY(MathUtils.Radians((float)this.currentRotation));
-            this.context.SetModelMatrix(modelMatrix);
+            CommandList commands = this.context.CommandList;
+            commands.Begin();
 
-            context.CommandList.Begin();
+            var projection = this.camera.ProjectionMatrix;
+            commands.UpdateBuffer(this.context.ProjectionMatrixBuffer, 0, projection);
 
-            this.context.CommandList.SetFramebuffer(this.context.GraphicsDevice.SwapchainFramebuffer);
-            this.context.CommandList.SetFullViewports();
-            this.context.CommandList.ClearColorTarget(0, RgbaFloat.Black);
-            this.context.CommandList.ClearDepthStencil(1f);
+            var view = this.camera.ViewMatrix;
+            commands.UpdateBuffer(this.context.ViewMatrixBuffer, 0, view);
+
+            var model = Matrix4x4.CreateRotationY(MathUtils.Radians((float)this.currentRotation));
+            commands.UpdateBuffer(this.modelMatrixBuffer, 0, model);
+
+            commands.SetFramebuffer(this.context.GraphicsDevice.SwapchainFramebuffer);
+            commands.SetFullViewports();
+            commands.ClearColorTarget(0, RgbaFloat.Black);
+            commands.ClearDepthStencil(1f);
 
             // Set all relevant state to draw our triangle.
-            this.context.CommandList.SetPipeline(this.context.Pipeline);
-            this.context.CommandList.SetVertexBuffer(0, vertexBuffer);
-            this.context.CommandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
-            this.context.CommandList.SetGraphicsResourceSet(0, this.context.ProjectionViewResourceSet);
-            this.context.CommandList.SetGraphicsResourceSet(1, this.context.ModelTextureResourceSet);
+            commands.SetPipeline(this.pipeline);
+            commands.SetVertexBuffer(0, vertexBuffer);
+            commands.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commands.SetGraphicsResourceSet(0, this.projectionViewResourceSet);
+            commands.SetGraphicsResourceSet(1, this.modelTextureResourceSet);
 
             // Issue a Draw command for a single instance with 12 * 3 (6 faced with 2 triangles per face) indices.
-            this.context.CommandList.DrawIndexed(
-                indexCount: (uint)this.vertices.Length,
+            commands.DrawIndexed(
+                indexCount: (uint)Indices.Length,
                 instanceCount: 1,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -88,6 +91,70 @@ namespace GameExercise
         public void Update(double elapsedTime)
         {
             currentRotation += 10 * elapsedTime / 1000;
+        }
+
+        private void CreateDeviceObjects()
+        {
+            this.context.CommandList.Begin();
+
+            this.modelMatrixBuffer = this.context.ResourceFactory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+
+            this.vertexBuffer = this.context.ResourceFactory.CreateBuffer(new BufferDescription((uint)Vertices.Length * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
+            this.context.CommandList.UpdateBuffer(vertexBuffer, 0, Vertices);
+
+            this.indexBuffer = this.context.ResourceFactory.CreateBuffer(new BufferDescription((uint)Indices.Length * sizeof(ushort), BufferUsage.IndexBuffer));
+            this.context.CommandList.UpdateBuffer(this.indexBuffer, 0, Indices);
+
+            this.context.CommandList.End();
+            this.context.GraphicsDevice.SubmitCommands(this.context.CommandList);
+            this.context.GraphicsDevice.WaitForIdle();
+
+            var shaderSet = new ShaderSetDescription(
+                new[]
+                {
+                    new VertexLayoutDescription(
+                        new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
+                        new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4))
+                },
+                new[]
+                {
+                    ShaderHelper.LoadShader(this.context.GraphicsDevice, this.context.ResourceFactory, ShaderStages.Vertex),
+                    ShaderHelper.LoadShader(this.context.GraphicsDevice, this.context.ResourceFactory, ShaderStages.Fragment)
+                });
+
+            ResourceLayout projectionViewLayout = this.context.ResourceFactory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("Projection", ResourceKind.UniformBuffer, ShaderStages.Vertex),
+                    new ResourceLayoutElementDescription("View", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
+
+            ResourceLayout modelTextureLayout = this.context.ResourceFactory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("Model", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
+
+            var rasterizeState = new RasterizerStateDescription(
+                cullMode: FaceCullMode.None,
+                fillMode: PolygonFillMode.Solid,
+                frontFace: FrontFace.CounterClockwise,
+                depthClipEnabled: true,
+                scissorTestEnabled: false);
+
+            this.pipeline = this.context.ResourceFactory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+                BlendStateDescription.SingleOverrideBlend,
+                DepthStencilStateDescription.DepthOnlyLessEqual,
+                rasterizeState,
+                PrimitiveTopology.TriangleList,
+                shaderSet,
+                new[] { projectionViewLayout, modelTextureLayout },
+                this.context.GraphicsDevice.SwapchainFramebuffer.OutputDescription));
+
+            this.projectionViewResourceSet = this.context.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+                projectionViewLayout,
+                this.context.ProjectionMatrixBuffer,
+                this.context.ViewMatrixBuffer));
+
+            this.modelTextureResourceSet = this.context.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+                modelTextureLayout,
+                this.modelMatrixBuffer));
         }
     }
 }

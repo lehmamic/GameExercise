@@ -7,6 +7,7 @@ namespace GameExercise
     {
         private readonly StateSystem stateSystem;
         private readonly IRendererContext context;
+        private readonly Camera camera;
 
         private double delayInMilliseconds = 3000;
 
@@ -23,6 +24,7 @@ namespace GameExercise
             }
             this.stateSystem = stateSystem;
             this.context = context;
+            this.camera = new Camera(this.context.Window.Width, this.context.Window.Height);
         }
 
         public void Render()

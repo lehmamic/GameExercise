@@ -14,16 +14,8 @@ namespace GameExercise
 
         CommandList CommandList { get; }
 
-        Pipeline Pipeline { get; }
+        DeviceBuffer ProjectionMatrixBuffer { get; }
 
-        ResourceSet ProjectionViewResourceSet { get; }
-
-        ResourceSet ModelTextureResourceSet { get; }
-
-        void SetProjectionMatrix(Matrix4x4 projection);
-
-        void SetViewMatrix(Matrix4x4 view);
-
-        void SetModelMatrix(Matrix4x4 model);
+        DeviceBuffer ViewMatrixBuffer { get; }
     }
 }
