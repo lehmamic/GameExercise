@@ -44,6 +44,7 @@ namespace GameExercise
             this.context = context;
 
             this.camera = new Camera(this.context.Window.Width, this.context.Window.Height);
+            this.camera.Position = new Vector3(0f, 0f, 3f);
 
             this.CreateDeviceObjects();
         }
