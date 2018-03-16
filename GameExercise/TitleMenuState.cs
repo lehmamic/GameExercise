@@ -53,6 +53,8 @@ namespace GameExercise
             CommandList commands = this.context.CommandList;
             commands.Begin();
 
+            this.camera.WindowResized(context.Window.Width, context.Window.Height);
+
             var projection = this.camera.ProjectionMatrix;
             commands.UpdateBuffer(this.context.ProjectionMatrixBuffer, 0, projection);
 
@@ -63,6 +65,10 @@ namespace GameExercise
             commands.UpdateBuffer(this.modelMatrixBuffer, 0, model);
 
             commands.SetFramebuffer(this.context.GraphicsDevice.SwapchainFramebuffer);
+
+            // var framebufferWidth = this.context.GraphicsDevice.SwapchainFramebuffer.Width;
+            // var framebufferHeight = this.context.GraphicsDevice.SwapchainFramebuffer.Height;
+            // commands.SetViewport(0, new Viewport(0, 0, framebufferWidth, framebufferHeight, 0, 1));
             commands.SetFullViewports();
             commands.ClearColorTarget(0, RgbaFloat.Black);
             commands.ClearDepthStencil(1f);
